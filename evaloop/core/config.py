@@ -9,6 +9,7 @@ from pathlib import Path
 @dataclass
 class EvaluationConfig:
     """Configuration for evaluation experiments."""
+    loop: str = "code_generation_summarization"
     
     # Model configuration
     model: str = ""
