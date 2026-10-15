@@ -9,6 +9,7 @@ from pathlib import Path
 @dataclass
 class EvaluationConfig:
     """Configuration for evaluation experiments."""
+    loop: str = "code_generation_summarization"
     
     # Model configuration
     model: str = ""
@@ -129,7 +130,7 @@ class EvaluationConfig:
     def _create_model_config(self, model: str) -> Dict[str, Any]:
         """Create configuration for a specific model."""
         # Determine model type based on model name/path
-        if any(provider in model.lower() for provider in ["gpt", "chatgpt", "openai"]):
+        if any(provider in model.lower() for provider in ["gpt", "chatgpt", "openai", "maas"]):
             model_type = "openai"
         elif "claude" in model.lower():
             model_type = "anthropic"
@@ -419,5 +420,13 @@ class EvaluationConfig:
         elif task_type == "code_translation":
             # Code translation is not currently supported but kept as interface
             raise NotImplementedError("Code translation is not currently supported")
+        elif task_type == "code_generation_tests":
+            return [
+                {
+                    "type": "code_generation",
+                    "prompt_template": "Generate Python code for the following task:\n\n{description}\n\nReturn only the code, without explanations or comments.",
+                },
+                {"type": "assert_writing"},
+            ]
         else:
             raise ValueError(f"Unsupported task type: {task_type}. Currently only 'code_generation_summarization' is supported.")
